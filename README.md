@@ -3,6 +3,7 @@
 A full-stack web application for managing a library: books, authors, loans, reservations, and reports.
 
 **Author:** max
+
 **Stack:** React + Vite + TypeScript, Ant Design, Supabase, Vercel
 
 ---
