@@ -28,8 +28,9 @@ export default function ReportsPage() {
 
       // Popular books: count loans per book
       const bookCounts = new Map<string, number>();
-      (loansData.data ?? []).forEach((l: { books?: { title: string } | null }) => {
-        const title = l.books?.title ?? 'Unknown';
+      (loansData.data ?? []).forEach((l) => {
+        const item = l as { books?: { title: string } | null; user_id?: string };
+        const title = item.books?.title ?? 'Unknown';
         bookCounts.set(title, (bookCounts.get(title) ?? 0) + 1);
       });
       const popularSorted = Array.from(bookCounts.entries())
@@ -39,22 +40,22 @@ export default function ReportsPage() {
       setPopular(popularSorted);
 
       // Overdue items
-      const overdueItems = (overdueData.data ?? []).map((l: {
-        books?: { title: string } | null;
-        profiles?: { first_name: string; last_name: string } | null;
-        due_date: string;
-      }) => ({
-        title: l.books?.title ?? '—',
-        borrower: `${l.profiles?.first_name ?? ''} ${l.profiles?.last_name ?? ''}`.trim(),
-        due_date: l.due_date,
-        days_overdue: dayjs().diff(dayjs(l.due_date), 'day'),
-      }));
+      const overdueItems = (overdueData.data ?? []).map((l) => {
+        const row = l as { books?: { title: string } | null; profiles?: { first_name: string; last_name: string } | null; due_date: string };
+        return {
+          title: row.books?.title ?? '—',
+          borrower: `${row.profiles?.first_name ?? ''} ${row.profiles?.last_name ?? ''}`.trim(),
+          due_date: row.due_date,
+          days_overdue: dayjs().diff(dayjs(row.due_date), 'day'),
+        };
+      });
       setOverdue(overdueItems);
 
       // Active users
       const userCounts = new Map<string, number>();
-      (loansData.data ?? []).forEach((l: { user_id?: string }) => {
-        if (l.user_id) userCounts.set(l.user_id, (userCounts.get(l.user_id) ?? 0) + 1);
+      (loansData.data ?? []).forEach((l) => {
+        const row2 = l as { user_id?: string };
+        if (row2.user_id) userCounts.set(row2.user_id, (userCounts.get(row2.user_id) ?? 0) + 1);
       });
 
       const { data: profilesData } = await supabase.from('profiles').select('id, first_name, last_name');
