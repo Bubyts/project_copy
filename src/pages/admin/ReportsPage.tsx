@@ -29,7 +29,7 @@ export default function ReportsPage() {
       // Popular books: count loans per book
       const bookCounts = new Map<string, number>();
       (loansData.data ?? []).forEach((l) => {
-        const item = l as { books?: { title: string } | null; user_id?: string };
+        const item = l as unknown as { books?: { title: string } | null; user_id?: string };
         const title = item.books?.title ?? 'Unknown';
         bookCounts.set(title, (bookCounts.get(title) ?? 0) + 1);
       });
@@ -41,7 +41,7 @@ export default function ReportsPage() {
 
       // Overdue items
       const overdueItems = (overdueData.data ?? []).map((l) => {
-        const row = l as { books?: { title: string } | null; profiles?: { first_name: string; last_name: string } | null; due_date: string };
+        const row = l as unknown as { books?: { title: string } | null; profiles?: { first_name: string; last_name: string } | null; due_date: string };
         return {
           title: row.books?.title ?? '—',
           borrower: `${row.profiles?.first_name ?? ''} ${row.profiles?.last_name ?? ''}`.trim(),
